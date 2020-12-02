@@ -81,11 +81,13 @@ export default class Matrix<Element> {
    * @returns {MatrixCoordinate | null} Coordinate of the right adjacent or null if there is none.
    */
   right(coordinate: MatrixCoordinate): MatrixCoordinate | null {
-    if (coordinate.column >= this.columns) {
+    const rightColumn = coordinate.column + 1;
+
+    if (rightColumn >= this.columns) {
       return null;
     }
 
-    return new MatrixCoordinate(coordinate.row, coordinate.column + 1);
+    return new MatrixCoordinate(coordinate.row, rightColumn);
   }
 
   /**
@@ -107,11 +109,13 @@ export default class Matrix<Element> {
    * @returns {MatrixCoordinate | null} Coordinate of the bottom adjacent or null if there is none.
    */
   bottom(coordinate: MatrixCoordinate): MatrixCoordinate | null {
-    if (coordinate.row >= this.rows) {
+    const bottomRow = coordinate.row + 1;
+
+    if (bottomRow >= this.rows) {
       return null;
     }
 
-    return new MatrixCoordinate(coordinate.row + 1, coordinate.column);
+    return new MatrixCoordinate(bottomRow, coordinate.column);
   }
 
   /**
