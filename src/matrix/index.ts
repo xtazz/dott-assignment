@@ -1,4 +1,4 @@
-import MatrixCoordinate from './coordinate';
+import MatrixCoordinate from 'matrix/coordinate';
 
 /**
  * Contains data and dimensional information of the matrix.

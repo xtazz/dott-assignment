@@ -1,6 +1,6 @@
-import { Binary } from './types';
-import Matrix from './matrix';
-import MatrixCoordinate from './matrix/coordinate';
+import { Binary } from 'core/types';
+import Matrix from 'matrix';
+import MatrixCoordinate from 'matrix/coordinate';
 
 export default function findDistances(matrix: Matrix<Binary>): Matrix<number> {
   const queue: MatrixCoordinate[] = [];

@@ -20,6 +20,14 @@
     "noImplicitReturns": true,           
     "esModuleInterop": true,             
     "skipLibCheck": true,                
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "core/*": ["src/core/*"],
+      "app/*": ["src/app/*"],
+      "reader/*": ["src/reader/*"],
+      "matrix": ["src/matrix/index.ts"],
+      "matrix/coordinate": ["src/matrix/coordinate.ts"],
+    }
   }
 }

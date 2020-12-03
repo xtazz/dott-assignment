@@ -1,7 +1,12 @@
-import { Binary } from './types';
-import Matrix from './matrix';
-import findDistances from './findDistances';
-import BinaryMatrixReader, { MatrixReaderEvent, MatrixReaderLimits } from './binaryMatrixReader';
+import { Binary } from 'core/types';
+
+import Matrix from 'matrix';
+
+import BinaryMatrixReader from 'reader/binary';
+import MatrixReaderEvent from 'reader/event';
+import MatrixReaderLimits from 'reader/limits';
+
+import findDistances from 'app/findDistances';
 
 async function readMatrices(input: NodeJS.ReadStream, limits?: MatrixReaderLimits): Promise<Matrix<Binary>[]> {
   return new Promise((resolve, reject) => {

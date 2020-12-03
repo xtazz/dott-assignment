@@ -1,8 +1,13 @@
 import Readline from 'readline';
 import { EventEmitter } from 'events';
 
-import Matrix from './matrix';
-import { Binary } from './types';
+import { Binary } from 'core/types';
+
+import Matrix from 'matrix';
+
+import MatrixReaderError, { MatrixReaderErrorCode } from 'reader/error';
+import MatrixReaderLimits from 'reader/limits';
+import MatrixReaderEvent from 'reader/event';
 
 enum MatrixReaderStage {
   Count,
@@ -23,36 +28,6 @@ interface MatrixReaderState {
   index?: number;
   rows?: Binary[][];
   matrices?: Matrix<Binary>[];
-}
-
-export enum MatrixReaderEvent {
-  Matrix = 'matrix',
-  Error = 'error',
-  Done = 'done',
-}
-
-export enum MatrixReaderErrorCode {
-  CountFormatInvalid,
-  CountExceedsLimit,
-  DimensionsFormatInvalid,
-  DimensionsExceedLimit,
-  RowFormatInvalid,
-  ColumnFormatInvalid,
-  InputClosed,
-}
-
-export class MatrixReaderError extends Error {
-  constructor(readonly code: MatrixReaderErrorCode, msg?: string) {
-    super(msg);
-  }
-}
-
-export interface MatrixReaderLimits {
-  count?: number;
-  dimensions?: {
-    rows: number;
-    columns: number;
-  };
 }
 
 export default class BinaryMatrixReader extends EventEmitter {
