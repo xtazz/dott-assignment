@@ -45,7 +45,12 @@ export default function findDistances(matrix: Matrix<Binary>): Matrix<number> {
     let queueLength = queue.length;
 
     while (queueLength--) {
-      const coordinate = queue.shift()!;
+      const coordinate = queue.shift();
+
+      if (!coordinate) {
+        throw new Error('Invalid state: no coordinate in the queue');
+      }
+
       result.setAtCoordinate(coordinate, currentDistance); // updating result matrix with current distance to 1
 
       const left = matrix.left(coordinate);

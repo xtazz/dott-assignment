@@ -48,7 +48,7 @@ export default class Matrix<Element> {
    * @param {MatrixCoordinate} coordinate Coordinate within the matrix
    * @param {Element} value New value to set
    */
-  setAtCoordinate(coordinate: MatrixCoordinate, value: Element) {
+  setAtCoordinate(coordinate: MatrixCoordinate, value: Element): void {
     this.data[coordinate.row][coordinate.column] = value;
   }
 
@@ -58,8 +58,8 @@ export default class Matrix<Element> {
    * @param {number} column Matrix column
    * @param {Element} value New value to set
    */
-  set(row: number, column: number, value: Element) {
-    return (this.data[row][column] = value);
+  set(row: number, column: number, value: Element): void {
+    this.data[row][column] = value;
   }
 
   /**

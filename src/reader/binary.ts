@@ -82,7 +82,7 @@ export default class BinaryMatrixReader extends EventEmitter {
   /**
    * Starts reading matrices from the input stream
    */
-  start() {
+  start(): void {
     this.state = {
       stage: MatrixReaderStage.Count,
     };
@@ -197,7 +197,14 @@ export default class BinaryMatrixReader extends EventEmitter {
    * @param {string} row Matrix row with non-space separated columns, e.g. '0011'
    */
   private readRow(row: string) {
-    const columns = this.state.dimensions!.columns;
+    if (this.state.count == null || this.state.index == null || !this.state.dimensions) {
+      throw new MatrixReaderError(
+        MatrixReaderErrorCode.StateInvalid,
+        'Count, index and dimensions must be present at the row stage',
+      );
+    }
+
+    const columns = this.state.dimensions.columns;
 
     if (row.length < columns) {
       throw new MatrixReaderError(
@@ -226,24 +233,24 @@ export default class BinaryMatrixReader extends EventEmitter {
     }
 
     // Check if still has rows to read
-    if (this.state.dimensions!.rows > this.state.rows!.length) {
+    if (this.state.dimensions.rows > this.state.rows.length) {
       return;
     }
 
-    const matrix = new Matrix<Binary>(this.state.rows!);
+    const matrix = new Matrix<Binary>(this.state.rows);
 
     if (!this.state.matrices) {
       this.state.matrices = [matrix];
     } else {
-      this.state.matrices!.push(matrix);
+      this.state.matrices.push(matrix);
     }
 
     this.emit(MatrixReaderEvent.Matrix, matrix);
 
-    this.state.index! += 1;
+    this.state.index += 1;
     this.state.rows = undefined;
 
-    if (this.state.index! < this.state.count!) {
+    if (this.state.index < this.state.count) {
       this.state.stage = MatrixReaderStage.EmptyLine;
     } else {
       this.state.stage = MatrixReaderStage.Done;

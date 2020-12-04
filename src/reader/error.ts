@@ -9,6 +9,7 @@ export enum MatrixReaderErrorCode {
   RowFormatInvalid,
   ColumnFormatInvalid,
   InputClosed,
+  StateInvalid,
 }
 
 export default class MatrixReaderError extends Error {
