@@ -65,3 +65,16 @@ For the above input, app will give output in the following format:
 0 1 1 2
 1 2 2 3
 ```
+
+# Benchmark
+
+To run benchmark of the algorithm execute:
+```shell
+npm run benchmark
+```
+
+It will output results:
+```shell
+findDistances#10 x 94,563 ops/sec ±1.17% (83 runs sampled)
+findDistances#100 x 594 ops/sec ±4.30% (80 runs sampled)
+```
