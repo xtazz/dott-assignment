@@ -183,7 +183,7 @@ export default class BinaryMatrixReader extends EventEmitter {
 
     if (limits && (rows > limits.rows || columns > limits.columns)) {
       throw new MatrixReaderError(
-        MatrixReaderErrorCode.CountExceedsLimit,
+        MatrixReaderErrorCode.DimensionsExceedLimit,
         `Matrix dimensions (${rows}, ${columns}) exceed limit of (${limits.rows}, ${limits.columns})`,
       );
     }

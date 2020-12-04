@@ -3,89 +3,100 @@ import { Readable } from 'stream';
 import BinaryMatrixReader from 'reader/binary';
 import * as fixture from 'reader/binary.fixture';
 import MatrixReaderError, { MatrixReaderErrorCode } from './error';
+import MatrixReaderLimits from './limits';
+import Matrix from 'matrix';
+import { Binary } from 'core/types';
 
-function testError(input: string, expectedCode: MatrixReaderErrorCode, done: jest.DoneCallback) {
-  const readableInput = Readable.from(input);
-  const reader = new BinaryMatrixReader(readableInput);
+function testSuccess(
+  name: string,
+  input: {
+    value: string;
+    limits?: MatrixReaderLimits;
+  },
+  expectations: string[],
+) {
+  test(name, (done) => {
+    const readableInput = Readable.from(input.value);
+    const reader = new BinaryMatrixReader(readableInput, input.limits);
 
-  reader.on('error', (error) => {
-    expect(error.constructor).toEqual(MatrixReaderError);
-    const readerErr = error as MatrixReaderError;
-    expect(readerErr.code).toEqual(expectedCode);
-    done();
-    readableInput.emit('close');
+    reader.on('error', (error) => {
+      done.fail(`should not have error, but got: ${error}`);
+      readableInput.emit('close');
+    });
+
+    reader.on('done', (matrices: Matrix<Binary>[]) => {
+      const result = matrices.map((m) => m.toString());
+      expect(result).toStrictEqual(expectations);
+      done();
+      readableInput.emit('close');
+    });
+
+    reader.start();
   });
-
-  reader.on('done', () => {
-    done.fail('should not succeed');
-    readableInput.emit('close');
-  });
-
-  reader.start();
 }
 
-describe('count negative scenarios', () => {
-  test('negative number', (done) => {
-    testError(fixture.count.negative, MatrixReaderErrorCode.CountFormatInvalid, done);
-  });
+function testError(
+  name: string,
+  input: {
+    value: string;
+    limits?: MatrixReaderLimits;
+  },
+  expectedCode: MatrixReaderErrorCode,
+) {
+  test(name, (done) => {
+    const readableInput = Readable.from(input.value);
+    const reader = new BinaryMatrixReader(readableInput, input.limits);
 
-  test('not a number', (done) => {
-    testError(fixture.count.notNumeric, MatrixReaderErrorCode.CountFormatInvalid, done);
-  });
+    reader.on('error', (error) => {
+      expect(error.constructor).toEqual(MatrixReaderError);
+      const readerErr = error as MatrixReaderError;
+      expect(readerErr.code).toEqual(expectedCode);
+      done();
+      readableInput.emit('close');
+    });
 
-  test('zero', (done) => {
-    testError(fixture.count.zero, MatrixReaderErrorCode.CountFormatInvalid, done);
+    reader.on('done', () => {
+      done.fail('should not succeed');
+      readableInput.emit('close');
+    });
+
+    reader.start();
   });
+}
+
+describe('count', () => {
+  testError('negative number', fixture.count.negative, MatrixReaderErrorCode.CountFormatInvalid);
+  testError('not a number', fixture.count.notNumeric, MatrixReaderErrorCode.CountFormatInvalid);
+  testError('zero', fixture.count.zero, MatrixReaderErrorCode.CountFormatInvalid);
 });
 
-describe('dimensions negative scenarios', () => {
-  test('negative rows', (done) => {
-    testError(fixture.dimensions.negativeRows, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('negative columns', (done) => {
-    testError(fixture.dimensions.negativeColumns, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('non numeric rows', (done) => {
-    testError(fixture.dimensions.nonNumericRows, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('non numeric columns', (done) => {
-    testError(fixture.dimensions.nonNumericColumns, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('zero rows', (done) => {
-    testError(fixture.dimensions.zeroRows, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('zero columns', (done) => {
-    testError(fixture.dimensions.zeroColumns, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('no space', (done) => {
-    testError(fixture.dimensions.noDimensionsSpace, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
-
-  test('empty', (done) => {
-    testError(fixture.dimensions.noDimensions, MatrixReaderErrorCode.DimensionsFormatInvalid, done);
-  });
+describe('dimensions', () => {
+  testError('negative rows', fixture.dimensions.negativeRows, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('negative columns', fixture.dimensions.negativeColumns, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('non numeric rows', fixture.dimensions.nonNumericRows, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('non numeric columns', fixture.dimensions.nonNumericColumns, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('zero rows', fixture.dimensions.zeroRows, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('zero columns', fixture.dimensions.zeroColumns, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('no space', fixture.dimensions.noDimensionsSpace, MatrixReaderErrorCode.DimensionsFormatInvalid);
+  testError('empty', fixture.dimensions.noDimensions, MatrixReaderErrorCode.DimensionsFormatInvalid);
 });
 
-describe('rows negative scenarios', () => {
-  test('not binary', (done) => {
-    testError(fixture.rows.notBinary, MatrixReaderErrorCode.ColumnFormatInvalid, done);
-  });
+describe('rows', () => {
+  testError('not binary', fixture.rows.notBinary, MatrixReaderErrorCode.ColumnFormatInvalid);
+  testError('not numeric', fixture.rows.notNumeric, MatrixReaderErrorCode.ColumnFormatInvalid);
+  testError('columns count mismatch', fixture.rows.invalidColumnCount, MatrixReaderErrorCode.RowFormatInvalid);
+  testError('empty', fixture.rows.empty, MatrixReaderErrorCode.RowFormatInvalid);
+});
 
-  test('not numeric', (done) => {
-    testError(fixture.rows.notNumeric, MatrixReaderErrorCode.ColumnFormatInvalid, done);
-  });
+describe('limits', () => {
+  testError('count', fixture.limits.countExceeded, MatrixReaderErrorCode.CountExceedsLimit);
+  testError('rows', fixture.limits.rowsExceeded, MatrixReaderErrorCode.DimensionsExceedLimit);
+  testError('columns', fixture.limits.columnsExceeded, MatrixReaderErrorCode.DimensionsExceedLimit);
+});
 
-  test('columns count mismatch', (done) => {
-    testError(fixture.rows.invalidColumnCount, MatrixReaderErrorCode.RowFormatInvalid, done);
-  });
+testError('input closed', fixture.inputClosed, MatrixReaderErrorCode.InputClosed);
 
-  test('empty', (done) => {
-    testError(fixture.rows.empty, MatrixReaderErrorCode.RowFormatInvalid, done);
-  });
+describe('success', () => {
+  testSuccess('single', fixture.single, fixture.single.expect);
+  testSuccess('multiple', fixture.multiple, fixture.multiple.expect);
 });
