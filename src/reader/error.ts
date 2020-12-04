@@ -1,3 +1,6 @@
+/**
+ * Possible error codes produced by the matrix reader
+ */
 export enum MatrixReaderErrorCode {
   CountFormatInvalid,
   CountExceedsLimit,

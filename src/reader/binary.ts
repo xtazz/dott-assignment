@@ -9,6 +9,9 @@ import MatrixReaderError, { MatrixReaderErrorCode } from 'reader/error';
 import MatrixReaderLimits from 'reader/limits';
 import MatrixReaderEvent from 'reader/event';
 
+/**
+ * Defines possible matrix reader stages
+ */
 enum MatrixReaderStage {
   Count,
   Dimensions,
@@ -18,6 +21,9 @@ enum MatrixReaderStage {
   Error,
 }
 
+/**
+ * Defines current state of the matrix reader
+ */
 interface MatrixReaderState {
   stage: MatrixReaderStage;
   count?: number;
@@ -30,10 +36,33 @@ interface MatrixReaderState {
   matrices?: Matrix<Binary>[];
 }
 
+/**
+ * Reads matrices from the stream in a following format:
+ * 2 // count
+ * 3 3 // space separated dimensions: rows and columns
+ * 000 // rows
+ * 111
+ * 000
+ * // new line between matrices
+ * 3 4
+ * 0011
+ * 0100
+ * 1000
+ *
+ * Emits three events types:
+ * - MatrixReaderEvent.Matrix - for every new parsed matrix
+ * - MatrixReaderEvent.Done - parsing is completed successfully
+ * - MatrixReaderEvent.Error - there is an error with either input format or the stream
+ */
 export default class BinaryMatrixReader extends EventEmitter {
-  private rl: Readline.Interface;
+  private readonly rl: Readline.Interface;
   private state: MatrixReaderState;
 
+  /**
+   * Creates a binary matrix reader
+   * @param {NodeJS.ReadableStream} input Any readable stream
+   * @param {MatrixReaderLimits} limits Limits on matrices count and dimensions
+   */
   constructor(input: NodeJS.ReadableStream, private readonly limits?: MatrixReaderLimits) {
     super();
     this.rl = Readline.createInterface(input);
@@ -42,6 +71,17 @@ export default class BinaryMatrixReader extends EventEmitter {
     };
   }
 
+  /**
+   * Returns matrices read so far
+   * @returns {Matrix<Binary>[]} Array of read matrices
+   */
+  matrices(): Matrix<Binary>[] {
+    return this.state.matrices ?? [];
+  }
+
+  /**
+   * Starts reading matrices from the input stream
+   */
   start() {
     this.state = {
       stage: MatrixReaderStage.Count,
@@ -68,6 +108,10 @@ export default class BinaryMatrixReader extends EventEmitter {
     });
   }
 
+  /**
+   * Handles one line of input for the current parsing stage
+   * @param {string} line Line from input stream
+   */
   private handleLine(line: string) {
     switch (this.state.stage) {
       case MatrixReaderStage.Count:
@@ -85,6 +129,10 @@ export default class BinaryMatrixReader extends EventEmitter {
     }
   }
 
+  /**
+   * Reads matrices count
+   * @param {string} count String from input containing matrices count
+   */
   private readCount(count: string) {
     const matrixCount = parseInt(count, 10);
 
@@ -104,6 +152,10 @@ export default class BinaryMatrixReader extends EventEmitter {
     this.state.stage = MatrixReaderStage.Dimensions;
   }
 
+  /**
+   * Reads matrix dimensions
+   * @param {string} dimensions Matrix dimensions in the following format: 'rows columns'
+   */
   private readDimensions(dimensions: string) {
     const components = dimensions.split(' ').map((d) => parseInt(d, 10));
 
@@ -137,6 +189,10 @@ export default class BinaryMatrixReader extends EventEmitter {
     this.state.stage = MatrixReaderStage.Row;
   }
 
+  /**
+   * Reads matrix row
+   * @param {string} row Matrix row with non-space separated columns, e.g. '0011'
+   */
   private readRow(row: string) {
     const columns = this.state.dimensions!.columns;
 
