@@ -136,7 +136,7 @@ export default class BinaryMatrixReader extends EventEmitter {
   private readCount(count: string) {
     const matrixCount = parseInt(count, 10);
 
-    if (isNaN(matrixCount)) {
+    if (isNaN(matrixCount) || matrixCount < 1) {
       throw new MatrixReaderError(MatrixReaderErrorCode.CountFormatInvalid, `Count should be a number, got: ${count}`);
     }
 
@@ -169,7 +169,7 @@ export default class BinaryMatrixReader extends EventEmitter {
     const rows = components[0];
     const columns = components[1];
 
-    if (isNaN(rows) || isNaN(columns)) {
+    if (isNaN(rows) || isNaN(columns) || rows < 1 || columns < 1) {
       throw new MatrixReaderError(
         MatrixReaderErrorCode.DimensionsFormatInvalid,
         `One of the dimensions is not a number: ${dimensions}`,
