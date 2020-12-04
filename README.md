@@ -29,19 +29,19 @@ App reads input from standard input (stdin) in the following format:
 3 # number of test cases
 4 4 # space separated dimensions: rows columns
 0011 # row with columns, no spaces
-1000 # row with columns, no spaces
-1010 # row with columns, no spaces
-0101 # row with columns, no spaces
+0000 # row with columns, no spaces
+0010 # row with columns, no spaces
+0100 # row with columns, no spaces
 # new line in between test cases
 2 3 # space separated dimensions: rows columns
 010 # row with columns, no spaces
-101 # row with columns, no spaces
+100 # row with columns, no spaces
 # new line in between test cases
 4 4 # space separated dimensions: rows columns
 1100 # row with columns, no spaces
-0011 # row with columns, no spaces
-1100 # row with columns, no spaces
-0011 # row with columns, no spaces
+0010 # row with columns, no spaces
+1000 # row with columns, no spaces
+0000 # row with columns, no spaces
 ```
 
 There are limits set for the input data:
@@ -50,7 +50,18 @@ There are limits set for the input data:
 
 # Output format
 
-For the correct input, app will give output in the following format:
+For the above input, app will give output in the following format:
 ```shell
-// TODO
+2 1 0 0
+3 2 1 1
+2 1 0 1
+1 0 1 2
+
+1 0 1
+0 1 2
+
+0 0 1 2
+1 1 0 1
+0 1 1 2
+1 2 2 3
 ```
