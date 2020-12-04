@@ -1,0 +1,8 @@
+# Built JS files
+dist
+
+# Node modules
+node_modules
+
+# ESLint configuration
+.eslintrc.js
