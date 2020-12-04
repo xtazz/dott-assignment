@@ -26,7 +26,7 @@ export default function findDistances(matrix: Matrix<Binary>): Matrix<number> {
 
       // putting all 1s to the queue
       if (element === 1) {
-        queue.push(new MatrixCoordinate(row, column));
+        queue.push({ row, column });
       }
     }
 

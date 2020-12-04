@@ -72,7 +72,7 @@ export default class Matrix<Element> {
       return null;
     }
 
-    return new MatrixCoordinate(coordinate.row, coordinate.column - 1);
+    return { row: coordinate.row, column: coordinate.column - 1 };
   }
 
   /**
@@ -87,7 +87,7 @@ export default class Matrix<Element> {
       return null;
     }
 
-    return new MatrixCoordinate(coordinate.row, rightColumn);
+    return { row: coordinate.row, column: rightColumn };
   }
 
   /**
@@ -100,7 +100,7 @@ export default class Matrix<Element> {
       return null;
     }
 
-    return new MatrixCoordinate(coordinate.row - 1, coordinate.column);
+    return { row: coordinate.row - 1, column: coordinate.column };
   }
 
   /**
@@ -115,7 +115,7 @@ export default class Matrix<Element> {
       return null;
     }
 
-    return new MatrixCoordinate(bottomRow, coordinate.column);
+    return { row: bottomRow, column: coordinate.column };
   }
 
   /**
