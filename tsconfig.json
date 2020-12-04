@@ -3,7 +3,7 @@
     "incremental": true,
     "target": "es2020",
     "lib": ["es2020"],
-    "types": ["node"],
+    "types": ["jest", "node"],
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
@@ -28,10 +28,10 @@
       "core/*": ["src/core/*"],
       "app/*": ["src/app/*"],
       "reader/*": ["src/reader/*"],
-      "matrix": ["src/matrix/index.ts"],
-      "matrix/coordinate": ["src/matrix/coordinate.ts"]
+      "matrix/*": ["src/matrix/*"],
+      "matrix": ["src/matrix/index.ts"]
     }
   },
-  "include": ["src/**/*", "index.ts"],
+  "include": ["src/**/*.ts", "index.ts"],
   "exclude": ["node_modules", "dist"]
 }

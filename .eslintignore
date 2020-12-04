@@ -6,3 +6,9 @@ node_modules
 
 # ESLint configuration
 .eslintrc.js
+
+# Jest configuration
+jest.config.js
+
+# Tests
+*.test.ts
