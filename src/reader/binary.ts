@@ -206,7 +206,7 @@ export default class BinaryMatrixReader extends EventEmitter {
 
     const columns = this.state.dimensions.columns;
 
-    if (row.length < columns) {
+    if (row.length !== columns) {
       throw new MatrixReaderError(
         MatrixReaderErrorCode.RowFormatInvalid,
         `Should have exactly ${columns} columns, got ${row.length}`,
